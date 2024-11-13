@@ -6,16 +6,17 @@ const app = express();
 
 
 // yaha per koi bhi request jari hai server per , to server uske reesponse mai  "Hello from the server"  bhej dera hai.
-app.use("/test" , (req,res)=>{
-    res.send("Hello from the server");
+app.use("/user" , (req,res)=>{
+    res.send("Hhaahahahaahaha");
 });
 
-
-app.use("/hello" , (req,res)=>{
-    res.send("Hello from the server");
+app.get("/user" , (req,res)=>{
+  res.send({firstName:"tanishq" , lastName:"jain"});
 });
 
-
+app.post("/user", (req,res)=>{
+    res.send( "data successfully sned to database");
+})
 
 
 //server is listning on PORT 3000=>
