@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 
+//installing validator=>basically it validates my schema like email. it can validate that either user is writing email in correct formate.
+const validator = require("validator");
+
 const userSchema = new mongoose.Schema({
     firstName:{
         type:String,
@@ -15,10 +18,22 @@ const userSchema = new mongoose.Schema({
         unique:true,      //unique means that if u signup with same emailid that aready exits, then it won't let u signup;
         lowercase:true,   //it convert the uppercase if exist in user emailId to lowercase.
         trim:true,        //if user type its emailId with spaces between , it repair it.
+        
+        // this thing helps me the validate the email=>
+        validate(value){
+            if(!validator.isEmail(value)){
+                throw new Error("email formate is not correct:" + value);
+            }
+        }
     },
     password:{
         type:String,
         required:true,
+        validate(value){
+            if(!validator.isStrongPassword(value)){
+                throw new Error("password is not strong:" + value);
+            }
+        }
     },
     age:{
         type:Number, 

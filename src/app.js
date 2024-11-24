@@ -23,7 +23,7 @@ app.post("/signup" , async (req,res)=>{
         res.send("User added successfully").status(200);
     }
     catch(err){
-        res.status(500).send("error in saving user" + err.message);
+        res.status(500).send("error in saving user: " + err.message);
     }
    
 
@@ -100,23 +100,32 @@ app.delete("/deleteUser", async(req,res)=>{
 
 
 //update data of a user 
-app.patch("/updateUser" , async(req,res)=>{
-    const userId = req.body._id;
+app.patch("/updateUser/:_id" , async(req,res)=>{
+    const userId = req.params?._id;
     const data = req.body;
 
+    
+
     try{
-        if(!userId){
-            res.send("user not found")
-        }
-        else{
-            //  u can also write "userId" only,  insted of  "_id:userId" in curly brackets in below line.
-            const user = await User.findByIdAndUpdate({_id:userId} , data , {runValidators:true});
-            res.send("user updated successfully");
-        }
+
+         const allowed_Updates = [ "photoUrl", "about","gender", "age", "skills", "lastName"];
+         const isUpdateAllow = Object.keys(data).every((k)=>
+             allowed_Updates.includes(k)
+         );
+
+         if(!isUpdateAllow){
+            throw new Error("Update not allowed");
+         }
+         
+        
+        //  u can also write "userId" only,  insted of  "_id:userId" in curly brackets in below line.
+        const user = await User.findByIdAndUpdate({_id:userId} , data , {runValidators:true});
+        // console.log(user);
+        res.send("user updated successfully");
         
     }
     catch(err){
-        res.status(400).send("error while updating user");
+        res.status(400).send("error while updating user: " + err.message);
     }
 })
 
