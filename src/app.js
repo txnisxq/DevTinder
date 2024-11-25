@@ -1,8 +1,8 @@
 //sabse phele express ka instance leke aya hu mai
 const express =  require("express");
 const app = express(); 
-
-
+const {validateSignUpData, validateLogInData} =  require("./utils/validation");
+const bcrypt = require("bcrypt");
 
 //schema export kar liya hai
 const User = require("./models/user");
@@ -16,17 +16,62 @@ app.use(express.json());
 //this is cretaing post api: for signIn purpose:
 app.post("/signup" , async (req,res)=>{
      
-    //creating a new instance of a User model=>
-    const user = new User(req.body);
+   
     try{
-        await user.save();
-        res.send("User added successfully").status(200);
+        //data validation:(for new user to register)
+       validateSignUpData(req);
+
+
+       const {password , lastName , emailId, firstName} = req.body;
+       
+       //Encrypting the password:(forsecurity purpose)
+       
+       const passwordHash = await bcrypt.hash(password , 10);
+       console.log(passwordHash);
+
+
+       //creating a new instance of a User model=>
+       const user = new User({
+        firstName, 
+        lastName , 
+        password:passwordHash, 
+        emailId
+    });
+       await user.save();
+       res.send("User added successfully").status(200);
     }
     catch(err){
-        res.status(500).send("error in saving user: " + err.message);
+       res.status(500).send("error in saving user: " + err.message);
     }
    
 
+});
+
+
+
+//this is login API - (POST type)
+app.post("/login" , async(req,res)=>{
+     try{
+        validateLogInData(req);
+
+        const {emailId , password} = req.body;
+
+        //checking weather the email exist in DB or not
+        const userInfo = await User.findOne({emailId: emailId});
+        if(!userInfo){
+            throw new Error("email not present , signUp first: ");
+        }
+
+        const isPasswordValid = await bcrypt.compare(password , userInfo.password);
+        if(!isPasswordValid){
+            throw new Error("password not match: ")
+        }
+
+        res.send("loggin Successfull!!!")
+     }
+     catch(err){
+        res.status(400).send("ERROR " + err.message );
+     }
 });
 
 
