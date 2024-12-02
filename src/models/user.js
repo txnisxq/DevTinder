@@ -7,7 +7,9 @@ const userSchema = new mongoose.Schema({
     firstName:{
         type:String,
         required:true,
-    },
+        index:true         //index:true makes index and make your code search faster as well
+        
+    }, 
     lastName:{
         type:String,
         

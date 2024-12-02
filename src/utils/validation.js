@@ -35,3 +35,12 @@ exports.validateLogInData = (req)=>{
     }
 }
 
+
+exports.validateEditProfileData = (req)=>{
+     const allowedEditFields = ["firstName" , "lastName" , "emailId", "gender" , "age" , "skills", "profileUrl","about"];
+
+     const isEditAllowed = Object.keys(req.body).every((field)=>allowedEditFields.includes(field));
+
+     return isEditAllowed;
+}
+
