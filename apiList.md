@@ -13,11 +13,15 @@
 
 
 # connection-Request-Router
-7> POST api => /request/send/interested/:userId (right-swipe).
-8> POST api => /request/send/ignored/:userId
-(left-swipe).
-9> POST api => /request/review/accept/:requestId
-10> POST api => /request/review/reject/:requestId
+7> POST api => /request/send/:status/:userId (right-swipe and left swipe).
+(status = ["interested" , "ignored"])
+
+
+
+8> POST api => /request/review/:status/:requestId
+(accepting or rejecting the connection request)
+(status = ["accepted" , " rejected"])
+
 
 
 

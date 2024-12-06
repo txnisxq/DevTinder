@@ -8,6 +8,8 @@ const User = require("../models/user");
 const {userAuthentication} = require("../middlewares/auth");
 
   
+
+
 requestRouter.post("/request/send/:status/:toUserId" , userAuthentication, async(req,res)=>{
      
     try{
@@ -78,5 +80,50 @@ requestRouter.post("/request/send/:status/:toUserId" , userAuthentication, async
 
 })
 
+
+
+
+requestRouter.post("/request/review/:status/:requestId" , userAuthentication , async(req,res)=>{
+    
+      const loggedInUser = req.user;
+      const status = req.params.status;
+      const requestId = req.params.requestId;
+
+      //CHECK-1 => status checking
+      const allowedStatus = ["accepted" , "rejected"];
+      if(!allowedStatus.includes(status)){
+        return res.status(404).json({
+            success:false,
+            message:"Status not allowed"
+        })
+      }
+
+
+      //CHECK-2 => A.  db mai jake check karo ki koi requestId exist karti hai ki nahi db mai (check for requestId).
+      //           B.  db mai jake check karo ki jisko request bheji hai vo exist karta hai ki nahi. (check for loggegInUser).
+      //           C.  db mai jake check karo ki status jo hai vo "interested" hi hona chhaiye , tabhi request acccept hogi. (check for interested).
+      const connectionRequest = await ConnectionRequest.findOne({
+        _id: requestId,
+        toUserId: loggedInUser,
+        status: "interested"
+      });
+
+      if(!connectionRequest){
+        return res.status(404).json({
+            message:"connection requets not found"
+        })
+      }
+
+      connectionRequest.status = status;
+
+      const data = await connectionRequest.save();
+
+      res.status(200).json({
+        success:true,
+        message:"Connection request " + status + " Successfully "
+      })
+
+
+})
 
 module.exports = requestRouter;
