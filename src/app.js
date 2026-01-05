@@ -3,6 +3,8 @@ const express =  require("express");
 const app = express(); 
 
 
+const cors = require("cors");
+
 
 
 
@@ -17,6 +19,12 @@ app.use(express.json());
 //basically when the request will come i can read the cookies because of that parser.
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
+
+
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
 
 
 
