@@ -20,6 +20,7 @@ profileRouter.get("/profile/view" ,userAuthentication, async(req,res)=>{
 //route and controller for editing our profile
 profileRouter.patch("/profile/edit" ,userAuthentication, async(req,res)=>{
     try{
+        console.log("REQ BODY =>", req);
         if(!validateEditProfileData(req)){
             throw new Error("Invalid Edit Request!!! ");
         } 
