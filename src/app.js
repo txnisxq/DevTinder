@@ -1,3 +1,7 @@
+const dotenv = require("dotenv");
+dotenv.config();
+
+
 //sabse phele express ka instance leke aya hu mai
 const express =  require("express");
 const app = express(); 
@@ -23,11 +27,18 @@ app.use(cookieParser());
 
 
 
+// app.use(cors({
+//     origin: "http://localhost:5173",
+//     methods: "GET,POST,PUT,DELETE",
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//     credentials: true,
+// }));
+
 app.use(cors({
-    origin: "*",
-    methods: "GET,POST,PUT,DELETE",
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
+  origin: "http://localhost:5173",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // ✅ add PATCH
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
 }));
 
 
@@ -37,12 +48,14 @@ const authRouter = require("./routes/authRoute");
 const profileRouter = require("./routes/profileRouter");
 const requestRouter = require("./routes/requestRouter");
 const userRouter = require("./routes/userRouter");
-
+const paymentRouter = require("./routes/paymentRoute");
 
 app.use("/" , authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/" , userRouter);
+app.use("/" , paymentRouter);
+
 
 
 //connecting  database
@@ -53,6 +66,7 @@ database()
     console.log("DB connect Successfully");
     app.listen(3000 , ()=>{
         console.log("server is successfully listning on port 3000")
+        //  console.log("KEY:", process.env.RAZORPAY_KEY_ID);
     });
   })
   .catch((err)=>{

@@ -48,6 +48,14 @@ const userSchema = new mongoose.Schema({
         type:String,
         default:"https://img.freepik.com/free-vector/blank-user-circles_78370-4336.jpg",
     },
+    isPremium:{
+        type:Boolean,
+        default:false,
+    },
+    membershipType:{
+        type:String,
+    },
+    
     about:{
         type:String,
         default:"This is default info about user",  // this about section can take default value in case if user dont put anything inside it by their own.
