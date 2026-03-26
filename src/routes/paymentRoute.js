@@ -69,17 +69,17 @@ paymentRouter.post("/payment/create" , userAuthentication, async(req,res)=>{
 
 
 
-paymentRouter.post("/payment/webhook" , async(req,res)=>{
+paymentRouter.post("/payment/webhook" ,express.raw({ type: "application/json" }), async(req,res)=>{
     
     try{
         
         //by this line i can get my webhook signature header which is sent by razorpay to my webhook url and this signature is used to verify the authenticity of the webhook request and to ensure that the request is coming from razorpay and not from any other source.
-        const webhookSignature = req.headers("X-Razorpay-Signature");
+        const webhookSignature = req.headers["x-razorpay-signature"];
         console.log("Webhook Signature:", webhookSignature);
 
 
         //this line actually validate webhook signature which is sent by razorpay to our webhook url and it will return true if the signature is valid and false if the signature is invalid.
-        const isWebhookValid = validateWebhookSignature(JSON.stringify(req.body), webhookSignature, process.env.RAZORPAY_WEBHOOK_SECRET);
+        const isWebhookValid = validateWebhookSignature(req.body, webhookSignature, process.env.RAZORPAY_WEBHOOK_SECRET);
         if(!isWebhookValid){
             return res.status(400).send("Invalid webhook signature");
         } 
