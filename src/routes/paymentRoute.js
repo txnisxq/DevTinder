@@ -90,12 +90,14 @@ paymentRouter.post("/payment/webhook" ,express.raw({ type: "application/json" })
         const payment = await Payment.findOne({orderId: paymentDetails.order_id});
         payment.status = paymentDetails.status;  //ye line mujhe payment status update karne me help karega jo ki razorpay mujhe bhej raha hai jab bhi koi payment hoti hai to razorpay mujhe uski details bhejta hai aur wo details mujhe req.body.payload.payment.entity ke andar milti hai.
         await payment.save();
+        console.log("Payment saved");
 
        //updating user ingo in DB about his premium membership
         const user = await User.findOne({id: payment.userId});
         user.isPremium = true;   //ye line mujhe user ko premium update karne me help karega.
         user.membershipType = payment.notes.membershipType;  //ye line mujhe user ke membership type ko update karne me help karega jo ki razorpay mujhe bhej raha hai jab bhi koi payment hoti hai to razorpay mujhe uski details bhejta hai aur wo details mujhe req.body.payload.payment.entity ke andar milti hai.
         await user.save();
+        console.log("User saved")
 
 
         //updating the user as premium
