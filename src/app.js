@@ -35,7 +35,7 @@ app.use(cookieParser());
 // }));
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: ["http://localhost:5173", "https://devlify.co.in"],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // ✅ add PATCH
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
