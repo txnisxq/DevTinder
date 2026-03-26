@@ -85,19 +85,42 @@ paymentRouter.post("/payment/webhook" ,express.raw({ type: "application/json" })
         } 
 
         //update my payment status in DB
-        const paymentDetails = req.body.payload.payment.entity;  //ye line mujhe payment details dega jo ki razorpay mujhe bhej raha hai jab bhi koi payment hoti hai to razorpay mujhe uski details bhejta hai aur wo details mujhe req.body.payload.payment.entity ke andar milti hai.
- 
-        const payment = await Payment.findOne({orderId: paymentDetails.order_id});
-        payment.status = paymentDetails.status;  //ye line mujhe payment status update karne me help karega jo ki razorpay mujhe bhej raha hai jab bhi koi payment hoti hai to razorpay mujhe uski details bhejta hai aur wo details mujhe req.body.payload.payment.entity ke andar milti hai.
-        await payment.save();
-        console.log("Payment saved");
+        // const paymentDetails = req.body.payload.payment.entity;  //ye line mujhe payment details dega jo ki razorpay mujhe bhej raha hai jab bhi koi payment hoti hai to razorpay mujhe uski details bhejta hai aur wo details mujhe req.body.payload.payment.entity ke andar milti hai.
+        const body = JSON.parse(req.body.toString());
+        console.log("EVENT TYPE:", body.event); // 👈 ADD THIS
+        const paymentDetails = body.payload.payment.entity;
+       
 
-       //updating user ingo in DB about his premium membership
-        const user = await User.findOne({id: payment.userId});
-        user.isPremium = true;   //ye line mujhe user ko premium update karne me help karega.
-        user.membershipType = payment.notes.membershipType;  //ye line mujhe user ke membership type ko update karne me help karega jo ki razorpay mujhe bhej raha hai jab bhi koi payment hoti hai to razorpay mujhe uski details bhejta hai aur wo details mujhe req.body.payload.payment.entity ke andar milti hai.
-        await user.save();
-        console.log("User saved")
+
+
+        const payment = await Payment.findOne({orderId: paymentDetails.order_id});
+  if (!payment) {
+  console.log("❌ Payment not found");
+  return res.status(400).send("Payment not found");
+}
+if (body.event === "payment.captured") {
+  payment.status = "captured";
+  await payment.save();
+
+  const user = await User.findById(payment.userId);
+  user.isPremium = true;
+  user.membershipType = payment.notes.membershipType;
+  await user.save();
+
+  console.log("✅ Payment captured & user upgraded");
+} else {
+  console.log("⚠️ Ignored event:", body.event);
+}
+    //     payment.status = paymentDetails.status;  //ye line mujhe payment status update karne me help karega jo ki razorpay mujhe bhej raha hai jab bhi koi payment hoti hai to razorpay mujhe uski details bhejta hai aur wo details mujhe req.body.payload.payment.entity ke andar milti hai.
+    //     await payment.save();
+    //     console.log("Payment saved");
+
+    //    //updating user ingo in DB about his premium membership
+    //     const user = await User.findOne({id: payment.userId});
+    //     user.isPremium = true;   //ye line mujhe user ko premium update karne me help karega.
+    //     user.membershipType = payment.notes.membershipType;  //ye line mujhe user ke membership type ko update karne me help karega jo ki razorpay mujhe bhej raha hai jab bhi koi payment hoti hai to razorpay mujhe uski details bhejta hai aur wo details mujhe req.body.payload.payment.entity ke andar milti hai.
+    //     await user.save();
+    //     console.log("User saved")
 
 
         //updating the user as premium
