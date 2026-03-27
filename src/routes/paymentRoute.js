@@ -69,7 +69,7 @@ paymentRouter.post("/payment/create" , userAuthentication, async(req,res)=>{
 
 
 
-paymentRouter.post("/payment/webhook" ,express.raw({ type: "application/json" }), async(req,res)=>{
+paymentRouter.post("/payment/webhook" , async(req,res)=>{
     
     try{
         
@@ -102,7 +102,7 @@ paymentRouter.post("/payment/webhook" ,express.raw({ type: "application/json" })
 
         //update my payment status in DB
         // const paymentDetails = req.body.payload.payment.entity;  //ye line mujhe payment details dega jo ki razorpay mujhe bhej raha hai jab bhi koi payment hoti hai to razorpay mujhe uski details bhejta hai aur wo details mujhe req.body.payload.payment.entity ke andar milti hai.
-        const body = JSON.parse(req.body.toString());
+        const body = req.body;
         console.log("EVENT TYPE:", body.event); // 👈 ADD THIS
         const paymentDetails = body.payload.payment.entity;
        
