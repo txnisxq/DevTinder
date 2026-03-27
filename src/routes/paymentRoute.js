@@ -96,9 +96,9 @@ paymentRouter.post("/payment/webhook" , async(req,res)=>{
         
         
         const isWebhookValid = validateWebhookSignature(req.body, webhookSignature, process.env.RAZORPAY_WEBHOOK_SECRET);
-        // if(!isWebhookValid){
-        //     return res.status(400).send("Invalid webhook signature");
-        // } 
+        if(!isWebhookValid){
+            return res.status(400).send("Invalid webhook signature");
+        } 
 
         //update my payment status in DB
         // const paymentDetails = req.body.payload.payment.entity;  //ye line mujhe payment details dega jo ki razorpay mujhe bhej raha hai jab bhi koi payment hoti hai to razorpay mujhe uski details bhejta hai aur wo details mujhe req.body.payload.payment.entity ke andar milti hai.
