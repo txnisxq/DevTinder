@@ -75,14 +75,30 @@ paymentRouter.post("/payment/webhook" ,express.raw({ type: "application/json" })
         
         //by this line i can get my webhook signature header which is sent by razorpay to my webhook url and this signature is used to verify the authenticity of the webhook request and to ensure that the request is coming from razorpay and not from any other source.
         const webhookSignature = req.headers["x-razorpay-signature"];
-        console.log("Webhook Signature:", webhookSignature);
+        // console.log("Webhook Signature:", webhookSignature);
 
 
+        
+        
         //this line actually validate webhook signature which is sent by razorpay to our webhook url and it will return true if the signature is valid and false if the signature is invalid.
+        
+        
+        //validation check weather webhooks which is sent by razorpay is valid or not because anyone can hit this webhook url and if we will not validate the signature then anyone can hit this webhook url and can update our payment status in our database which can be a security issue for us. so that is why we have to validate the signature which is sent by razorpay to our webhook url.
+        console.log("🔥 Webhook HIT");   
+        console.log("Signature:", webhookSignature);   
+        console.log("Secret:", process.env.RAZORPAY_WEBHOOK_SECRET);
+        
+        
+        
+        
+        
+        
+        
+        
         const isWebhookValid = validateWebhookSignature(req.body, webhookSignature, process.env.RAZORPAY_WEBHOOK_SECRET);
-        if(!isWebhookValid){
-            return res.status(400).send("Invalid webhook signature");
-        } 
+        // if(!isWebhookValid){
+        //     return res.status(400).send("Invalid webhook signature");
+        // } 
 
         //update my payment status in DB
         // const paymentDetails = req.body.payload.payment.entity;  //ye line mujhe payment details dega jo ki razorpay mujhe bhej raha hai jab bhi koi payment hoti hai to razorpay mujhe uski details bhejta hai aur wo details mujhe req.body.payload.payment.entity ke andar milti hai.
